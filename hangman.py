@@ -62,19 +62,20 @@ HANGMANPICS = ['''
 
 def readWordList():
     file = open('test.txt', 'r')
-    return file
+    str = file.read().split()
+    return str
 
-word = file.read().split()
+words = readWordList()
 
 def getRandomWord(wordList):
     # This function returns a random string from the passed list of strings.
     wordIndex = random.randint(0, len(wordList) - 1)
     return wordList[wordIndex]
 
-def displayBoard(HANGMANPICS, missedLetters, correctLetters, secretWord):
+def displayBoard(HANGMANPICS, missedLetters, correctLetters, secretWord, score):
     print(HANGMANPICS[len(missedLetters)])
     print()
-
+    print("Your score is " + str(score) + ' ')
     print('Missed letters:', end=' ')
     for letter in missedLetters:
         print(letter, end=' ')
@@ -125,23 +126,38 @@ def checkWrongAnswer(missedLetters, secretWord):
     if len(missedLetters) == len(HANGMANPICS) - 1:
         return True
     return False
-            
+
+def readRecord():
+    file = open('record.txt', 'r')
+    read = file.read()
+    return read
+
+def writeRecord(input):
+    file = open('record.txt', 'w')
+    file.write(str(input))
+
+
 def main():
     """Main application entry point."""
-    print('H A N G Y E O L by Park')
+    print('H A N G Y E O L by studySW')
     missedLetters = ''
     correctLetters = ''
     gameSucceeded = False
     gameFailed = False
     secretWord = getRandomWord(words)
+    record = 0
 
     while True:
-        displayBoard(HANGMANPICS, missedLetters, correctLetters, secretWord)
+        displayBoard(HANGMANPICS, missedLetters, correctLetters, secretWord, record)
 
         if gameSucceeded or gameFailed:
             if gameSucceeded:
-                print('Yes! The secret word is "' + secretWord + '"! You have won!')
+                record += 5
+                print("Your score is " + str(record) + ' ')
+                print('Yes! The secret word is "' + secretWord + '"! You have won!' + '  ' + str(record))
             else:
+                record -= 3
+                print("Your score is " + str(record) + ' ')
                 print('You have run out of guesses!\nAfter ' + str(len(missedLetters)) + ' missed guesses and ' + str(len(correctLetters)) + ' correct guesses, the word was "' + secretWord + '"')
 
             # Ask the player if they want to play again (but only if the game is done).
@@ -152,7 +168,13 @@ def main():
                 gameFailed = False
                 secretWord = getRandomWord(words)
                 continue 
-            else: 
+            else:
+                output = readRecord()
+                if record > int(output):
+                    writeRecord(record)
+
+                bestScore = readRecord()
+                print("Best score is " + str(bestScore) + ' ')
                 break
 
         # Let the player type in a letter.
@@ -160,9 +182,12 @@ def main():
         if guess in secretWord:
             correctLetters = correctLetters + guess
             gameSucceeded = checkCorrectAnswer(correctLetters, secretWord)
+            record += 1
         else:
             missedLetters = missedLetters + guess
             gameFailed = checkWrongAnswer(missedLetters, secretWord)
+
+
 
 
 if __name__ == "__main__":
