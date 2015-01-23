@@ -61,8 +61,9 @@ HANGMANPICS = ['''
 =========''']
 
 def readWordList():
-    file = open('text.txt','r')
-    return file.read().split()
+    file = open('test.txt','r')
+    str = file.read().split()
+    return str
 
 words = readWordList()
 
@@ -128,7 +129,7 @@ def checkWrongAnswer(missedLetters, secretWord):
             
 def main():
     """Main application entry point."""
-    print('H A N G Y E O L by Park')
+    print('H A N G Y E O L by team')
     missedLetters = ''
     correctLetters = ''
     gameSucceeded = False
